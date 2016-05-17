@@ -49,35 +49,41 @@ var input, left, right, axis;
 
 var stream = fs.createWriteStream(output);
 
-fs.writeFile(output, "initialize");
-fs.writeFile(output, "Hello");
-
 input();
 
+
 function input() {
+    /*
     const readline = require('readline');
 
     const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
+     * */
+    /*
+    process.stdin.setEncoding('utf8');
 
-    rl.question('Enter a function to graph.', (answer) => {
-        console.log('Your function will be graphed.');
-    input = answer;
-    rl.pause();
+    process.stdin.on('readable', () => {
+    */
+    /*
+    fs.readFile('input.txt', 'utf8', function(err, data) {
+        if (err) {
+            return console.log(err);
+        }
+        console.log(data);
+        fs.writeFile(output, data);
+
     });
-    rl.question('Enter left bound', (answer) => {
-        left = answer;
-    rl.pause();
+    */
+    var lineReader = require('readline').createInterface({
+        input: require('fs').createReadStream('input.txt')
     });
-    rl.question('Enter right bound', (answer) => {
-        right = answer;
-    rl.pause();
+ 
+
+    lineReader.on('line', function (line) {
+        console.log('Line from file:', line);
     });
-    rl.question('X or Y axis?', (answer) => {
-        axis = answer;
-    rl.pause();
-    });
-}
+
+};
 
