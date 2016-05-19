@@ -1,6 +1,7 @@
 function initialize() {
     var initialSettings = "G21 ; set units to millimeters";
 }
+
 function processing() {
     //initialize math.js
     math = mathjs();
@@ -43,47 +44,52 @@ function getCoordinates(angle, radius) {
 
 var fs = require('fs');
 
-var output = 'printer.gcode';
-
-var input, left, right, axis;
-
-var stream = fs.createWriteStream(output);
+var graph, left, right, axis;
 
 input();
 
+console.log("Function to Graph: " + graph);
 
 function input() {
     /*
-    const readline = require('readline');
-
-    const rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-    });
-     * */
-    /*
-    process.stdin.setEncoding('utf8');
-
-    process.stdin.on('readable', () => {
-    */
-    /*
-    fs.readFile('input.txt', 'utf8', function(err, data) {
-        if (err) {
-            return console.log(err);
-        }
-        console.log(data);
-        fs.writeFile(output, data);
-
-    });
-    */
     var lineReader = require('readline').createInterface({
         input: require('fs').createReadStream('input.txt')
     });
  
+    lineReader.input.setEncoding('utf8');
 
     lineReader.on('line', function (line) {
         console.log('Line from file:', line);
+        lineReader.pause();
+        graph.push(line);
     });
+    
+    lineReader.on('end', function () {
+        console.log("end");
+        print();
+    });
+    */
+    var prompt = require('prompt');
 
-};
+    prompt.start();
 
+    prompt.get(['input', 'leftBound', 'rightBound', 'axis'], function (err, result) {
+        if (err) {
+            processing();
+        }
+        console.log("Input received");
+        console.log("Function to Graph: " + result.input);
+        graph = result.input.toString();
+        left = parseInt(result.leftBound, 10);
+        right = parseInt(result.rightBound, 10);
+        axis = result.axis.toString();
+    })
+    
+
+}
+
+function output() {
+
+    var output = 'printer.gcode';
+    var stream = fs.createWriteStream(output);
+}
