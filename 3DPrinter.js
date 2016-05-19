@@ -1,3 +1,25 @@
+var prompt = require('prompt');
+
+function read() {
+
+    prompt.get(['input', 'leftBound', 'rightBound', 'axis'], function (err, result) {
+        if (err) {
+            console.log("hi");
+        }
+        console.log("Input received");
+        graph = result.input.toString();
+        left = parseInt(result.leftBound, 10);
+        right = parseInt(result.rightBound, 10);
+        axis = result.axis.toString();
+        rainbow(graph, left, right, axis);
+        read();
+    })
+}
+
+prompt.start();
+read();
+
+
 function initialize() {
     var initialSettings = "G21 ; set units to millimeters";
 }
@@ -46,47 +68,15 @@ var fs = require('fs');
 
 var graph, left, right, axis;
 
-input();
 
-console.log("Function to Graph: " + graph);
-
-function input() {
-    /*
-    var lineReader = require('readline').createInterface({
-        input: require('fs').createReadStream('input.txt')
-    });
- 
-    lineReader.input.setEncoding('utf8');
-
-    lineReader.on('line', function (line) {
-        console.log('Line from file:', line);
-        lineReader.pause();
-        graph.push(line);
-    });
-    
-    lineReader.on('end', function () {
-        console.log("end");
-        print();
-    });
-    */
-    var prompt = require('prompt');
-
-    prompt.start();
-
-    prompt.get(['input', 'leftBound', 'rightBound', 'axis'], function (err, result) {
-        if (err) {
-            processing();
-        }
-        console.log("Input received");
-        console.log("Function to Graph: " + result.input);
-        graph = result.input.toString();
-        left = parseInt(result.leftBound, 10);
-        right = parseInt(result.rightBound, 10);
-        axis = result.axis.toString();
-    })
-    
-
+function rainbow(graph, left, right, axis) {
+    console.log("Function to graph: " + graph);
+    console.log("Left Bound: " + left);
+    console.log("Right Bound: " + right);
+    console.log("Axis: " + axis);
 }
+
+//console.log("Function to Graph: " + graph);
 
 function output() {
 
