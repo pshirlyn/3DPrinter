@@ -12,33 +12,33 @@ function read() {
         right = parseInt(result.rightBound, 10);
         axis = result.axis.toString();
         rainbow(graph, left, right, axis);
-        read();
+        processing(graph);
     })
 }
 
 prompt.start();
 read();
 
-
 function initialize() {
     var initialSettings = "G21 ; set units to millimeters";
 }
 
-function processing() {
+function processing(polynomial) {
+    console.log(polynomial, " Received");
     //initialize math.js
-    math = mathjs();
+    var math = require('mathjs');
 
     // 'scope' defines the variables available inside the math expression.
     scope = {
         x: 0
-    },
+    };
 
     //expression as a tree
-    tree;
+    var tree;
 
     //sets expression
     function setExpr(newExpr) {
-        expr = newExpr;
+        var expr = newExpr;
         tree = math.parse(expr, scope);
     }
 
@@ -52,6 +52,7 @@ function processing() {
         // Evaluate the previously parsed math expression and return it
         return tree.eval();
     }
+    console.log(evalExpr(1));
 }
 
 function getCoordinates(angle, radius) {
