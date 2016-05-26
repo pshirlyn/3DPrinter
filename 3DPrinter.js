@@ -11,55 +11,51 @@ function read() {
 
     prompt.get(['input', 'leftBound', 'rightBound', 'axis'], function (err, result) {
         if (err) {
+            console.log(error);
         }
-        console.log("Input received");
         graph = result.input.toString();
         left = parseInt(result.leftBound, 10);
         right = parseInt(result.rightBound, 10);
         axis = result.axis.toString();
-        prompt.stop();
-        
+        output(initialize());
+        getCoordinates(2);
+        getCoordinates(2 - 0.3);
+        getCoordinates(2 - 0.6);
     })
 }
 
-prompt.start();
 read();
 
 /*
 rainbow();
 processing(graph);
 */
+var fs = require('fs');
+var util = require('util');
+var log_file = fs.createWriteStream('math.txt', { flags: 'w' });
 
-function initialize() {
-    var initialSettings = "G21\nM107\nM190 S55\nM104 S196\nG28\nG1 Z5 F5000\nM109 S196\nG90\nG92 E0\nM82\nG1 F1800.000 E-1.00000\nG92 E0\n";
-    return initialSettings;
-}
+output = function (d) { //
+    log_file.write(util.format(d) + '\n');
+};
 
-function processing(polynomial) {
-    var node = math.parse(polynomial);
 
-    zeroCalc = polynomial;
 
-    var scope = {
-        x: 3
-    };
-
-    var eval = node.eval(scope);
-
-    console.log(eval);
-}
-
-function getCoordinates(angle, radius) {
-    var xVal = radius * Math.cos(angle);
-    var yVal = radius * Math.sin(angle);
-    var command = "X"+xVal+" Y"+yVal;
-    fs.writeFile(output, command);
-    if(angle < Math.PI * 2) {
-        getCoordinates(angle += Math.PI/18, radius);
+function getCoordinates(radius) {
+    for (var i = 0; i < Math.PI * 2; i += Math.PI / 18) {
+        var xVal = Math.round(radius * Math.cos(i) * 1000) / 1000;
+        var yVal = Math.round(radius * Math.sin(i) * 1000) / 1000;
+        var extrusion = Math.sqrt(Math.pow(xVal, 2) + Math.power(yVal, 2)) * 0.0395;
+        var command = "G1"+ " "+ "X" + xVal + " Y" + yVal;
+        output(command);
     }
 }
 
-function zero(graph, value, left) {
+function initialize() {
+    var initialSettings = "G21\nM107\nM190 S55\nM104 S196\nG28\nG1 Z5 F5000\nM109 S196\nG90\nG92 E0\nM83\nG1 F1800.000 E-1.00000\nG92 E0\n";
+    return initialSettings;
+}
+
+function zVal(value, left) {
     var result = graph.concat(" "+value);
 
     var newFunction = math.parse(result);
@@ -92,7 +88,7 @@ function zero(graph, value, left) {
                 return i;
             }
         }
-    } else {
+    } /*else {
         for (var i = rightBound; i >= rightBound; i -= 0.001) {
             var prevVal = evalFunction(i + 0.001);
             var nextVal = evalFunction(i);
@@ -112,6 +108,7 @@ function zero(graph, value, left) {
             }
         }
     }
+    */
        
 }
 /*
@@ -143,24 +140,3 @@ function calculateZero(prevGuess, step, max) {
 }
 */
 
-var fs = require('fs');
-
-var graph, left, right, axis;
-
-
-function rainbow() {
-    console.log("Function to graph: " + graph);
-    console.log("Left Bound: " + left);
-    console.log("Right Bound: " + right);
-    console.log("Axis: " + axis);
-}
-
-function output() {
-    var output = 'printer.gcode';
-    var stream = fs.createWriteStream(output);
-    stream.once('open', function (fd) {
-        stream.write(initialize());
-        stream.end();
-        console.log("complete");
-    });
-}

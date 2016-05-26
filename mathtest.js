@@ -1,66 +1,18 @@
-var math = require('mathjs');
+var fs = require('fs');
+var util = require('util');
+var log_file = fs.createWriteStream('math.txt', { flags: 'w' });
 
-var leftBound = 0;
+output = function (d) { //
+    log_file.write(util.format(d) + '\n');
+};
 
-var rightBound = 6;
+getCoordinates(1);
 
-function zero(graph, value, left) {
-    var result = graph.concat(" - " + value);
-
-    var newFunction = math.parse(result);
-
-    console.log(result);
-
-    var scope = {
-        x: 3
-    };
-
-    var evalFunction = function (xVal) {
-        scope.x = xVal;
-        var value = newFunction.eval(scope);
-        return value;
-    }
-
-    if (left == true) {
-        for (var i = leftBound; i <= rightBound; i += 0.001) {
-            var prevVal = evalFunction(i - 0.001);
-            console.log(i, nextVal);
-            var nextVal = evalFunction(i);
-            if (nextVal == 0) {
-                return nextVal;
-            }
-            else if (prevVal == 0) {
-            }
-                //if same sign
-            else if ((nextVal < 0 && prevVal < 0) || (nextVal > 0 && prevVal > 0)) {
-                //do nothing
-            }
-                //if different signs
-            else {
-                return i;
-            }
-        }
-    } else {
-        for (var i = rightBound; i >= rightBound; i -= 0.001) {
-            var prevVal = evalFunction(i + 0.001);
-            var nextVal = evalFunction(i);
-            if (nextVal == 0) {
-                return nextVal;
-            }
-            else if (prevVal == 0) {
-
-            }
-                //if same sign
-            else if ((nextVal < 0 && prevVal < 0) || (nextVal > 0 && prevVal > 0)) {
-                //do nothing
-            }
-                //if different signs
-            else {
-                return i;
-            }
-        }
-    }
-
+function getCoordinates(radius) {
+   for (var i = 0; i < Math.PI * 2; i += Math.PI/18) {
+       var xVal = Math.round(radius * Math.cos(i) * 1000) / 1000;
+       var yVal = Math.round(radius * Math.sin(i) * 1000) / 1000;
+       var command = "X" + xVal + " Y" + yVal;
+       output(command);
+   }
 }
-
-console.log(zero("x ^ 2", 4, true));
